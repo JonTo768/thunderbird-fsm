@@ -46,3 +46,8 @@ run -all
 ## Note
 Reset is active-high asynchronous
 
+## Results
+- Waveform
+- <img width="1028" height="356" alt="image" src="https://github.com/user-attachments/assets/d6bf9eb0-b78b-47af-a0bf-5119b31c57f7" />
+
+
