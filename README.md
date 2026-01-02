@@ -4,10 +4,30 @@
 Moore finite state machine that generates Thunderbird-style turn signals and hazard behavior. 
 
 ## Interface
-Inputs: clk, reset, LEFT, RIGHT, HAZ
-Outputs: L_lights[2:0], R_lights[2:0]
+**Inputs:** clk, reset, LEFT, RIGHT, HAZ
+**Outputs:** L_lights[2:0], R_lights[2:0]
 
 ## Behavior/State Sequence 
+- **IDLE:** L = 000, R = 000
+- **LEFT:** L1 --> L2 --> L3 --> IDLE
+  - L1: 001, L2: 011, L3: 111 (R stays 000)
+- **RIGHT:** R1 --> R2 --> R3 --> IDLE 
+  - R1: 001, R2: 011, R3: 111 (L stays 000)
+- **HAZ or (LEFT && RIGHT) from IDLE:** LR# --> IDLE
+  - LR3: L = 111, R = 111
+- **HAZ asserted during L1/L2/R1/R2:** transitions to LR3 on the next clock cycle, then returns to IDLE
 
+## Project Structure
+- `src/thunderbirdFSM.sv` — RTL implementation (2-process FSM: 1. State Memory 2. Combinational Logic)
+- `tb/thunderbirdFSM_tb.sv` — testbench
 
+## How to Simulate (ModelSim/Questa)
+From the repo root:
+
+```tcl
+vlib work
+vlog -sv src/thunderbirdFSM.sv tb/thunderbirdFSM_tb.sv
+vsim work.thunderbirdFSM_tb
+add wave -r *
+run -all
 
