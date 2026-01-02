@@ -2,7 +2,7 @@
 
 module thunderbirdFSM_tb;
 
-// declare tb signals
+// Declare tb Signals
 logic clk, reset, LEFT, RIGHT, HAZ;
 logic [2:0] L_lights, R_lights;
 
@@ -17,7 +17,7 @@ thunderbirdFSM UUT (
 .R_lights(R_lights)
 );
 
-// initialize signals and clk generator (10 second cycles)
+// Initialize Signals and clk Generator (10-second cycles)
 initial begin
 	clk = 0;
 	reset = 1;
@@ -27,38 +27,39 @@ initial begin
 	forever #5 clk = ~clk;
 end
 
-// stimulus 
+// Stimulus 
 initial begin
 	#10 reset = 0;
 
-	// run through left sequence
+	// Run through left sequence
 	#10 LEFT = 1;
 	#40;
 
-	// run through right sequence
+	// Run through right sequence
 	LEFT = 0;
 	RIGHT = 1;
 	#40;
 
-	// interrupt right sequence with HAZ
+	// Interrupt right sequence with HAZ
 	#10 HAZ = 1;
 
 	#10 HAZ = 0; RIGHT = 0;
 
-	// interupt left sequence with HAZ
+	// Interrupt left sequence with HAZ
 	#10 LEFT = 1;
 	#20 HAZ = 1;
 
 	#10 HAZ = 0; LEFT = 0;
 
-	// HAZ from idle
+	// HAZ from IDLE
 	#10 HAZ = 1;
 
 	#10 HAZ = 0;
 
-	// Left and Rigth simultaneously -> LR3
+	// Left and Right Simultaneously -> LR3
 	#10 LEFT = 1; RIGHT = 1;
 	
 	#20 $finish;
 end
+
 endmodule
