@@ -1,24 +1,13 @@
 // Thunderbird Finite State Machine
 
 
-// Module header and port declerations
+// Module header and port declarations
 module thunderbirdFSM (
 input logic LEFT, RIGHT, HAZ, clk, reset,
 output logic [2:0] L_lights, R_lights
 );
 
-	// Declare state assignments
-	/* 
-	8 states: (need 3 bits)
-	IDLE: 000, no lights on
-	L1: 001, one left light on
-	L2: 011, two left lights on
-	L3: 010, all left lights on
-	R1: 101, one right light on
-	R2: 111, two right lights on
-	R3: 110, all left lights on
-	LR3: 100, all left and right lights on
-	*/
+	// State type & State Register
 	typedef enum logic [2:0] {
 		IDLE = 3'b000,
 		L1 = 3'b001,
@@ -32,28 +21,27 @@ output logic [2:0] L_lights, R_lights
 
 	state_t current_state, next_state;
 	
-	// Sequential Logic, state register (memory)
+	// State Register (Memory)
 	always_ff @ (posedge clk or posedge reset) begin
 		if (reset)
 			current_state <= IDLE;
 		else 
-			current_state <= next_state; // non blocking assignment in sequential blocks
-						// current_state isnt assigned to next_state until the end of the block, irrelevant in this case
+			current_state <= next_state;
 	end
 	
-	// Combinational Logic, next state logic
+	// Next State Logic
 	always_comb begin
-		// Default behavior to prevent X or latch. 
+		// Default to IDLE to prevent X behavior or latch. 
 		next_state = IDLE;
 		case (current_state)
 			IDLE: begin
 				if (HAZ || (LEFT && RIGHT))
 					next_state  = LR3;
-				else if (LEFT & ~HAZ & ~RIGHT) // same as if (LEFT)
+				else if (LEFT)
 					next_state = L1;
-				else if (RIGHT & ~HAZ & ~LEFT) // same as if (RIGHT)
+				else if (RIGHT)
 					next_state = R1;
-				else if (~(LEFT | RIGHT | HAZ)) // same as non asserted, else
+				else
 					next_state = IDLE;
 			end
 
@@ -62,7 +50,6 @@ output logic [2:0] L_lights, R_lights
 					next_state = LR3;
 				else if (~HAZ)
 					next_state = L2;
-
 				// next_state  = (HAZ ? LR3:L2);
 			end
 
@@ -74,10 +61,7 @@ output logic [2:0] L_lights, R_lights
 				// next_state = (HAZ ? LR3:L3)
 			end
 
-			L3: begin
-				next_state =  IDLE;
-			end
-				// Can exclude begin and end if one line
+			L3: next_state =  IDLE;
 
 			R1: begin
 				if (HAZ)
@@ -105,7 +89,7 @@ output logic [2:0] L_lights, R_lights
 
 	// Output Logic (Moore Machine)
 	always_comb begin
-		// default
+		// Default to IDLE
 		L_lights = 3'b000;
 		R_lights = 3'b000;
 		case (current_state)
@@ -141,9 +125,11 @@ output logic [2:0] L_lights, R_lights
 				L_lights = 3'b111;
 				R_lights = 3'b111;
 			end
-			default: ; // already zeroed, in idle state
-
+			default: begin
+				// IDLE
+				L_lights = 3'b000;
+				R_lights = 3'b000;
+			end
 		endcase
 	end
-
 endmodule
