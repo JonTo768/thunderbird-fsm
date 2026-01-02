@@ -18,8 +18,7 @@ Moore finite state machine that generates Thunderbird-style turn signals and haz
 - **HAZ asserted during L1/L2/R1/R2:** transitions to LR3 on the next clock cycle, then returns to IDLE
 
 ## State Diagram
-[Thunderbird FSM State Diagram.pdf](https://github.com/user-attachments/files/24412742/Thunderbird.FSM.State.Diagram.pdf)
-
+<img width="764" height="975" alt="image" src="https://github.com/user-attachments/assets/9b8743ea-57a4-41a4-a3c7-916feea4aefd" />
 
 ## Project Structure
 - `thunderbirdFSM.sv` — RTL implementation (2-process FSM: 1. State Memory 2. Combinational Logic)
